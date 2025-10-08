@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import math
+import time
 GPIO.setmode(GPIO.BCM)
 
 p = 25    # GPIO pin number
