@@ -15,6 +15,7 @@ in1 = 26
 GPIO.setup(in1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 def callbackFunction(direction):
+  global pos_neg
   pos_neg *= -1
 
 GPIO.add_event_detect(in1, GPIO.RISING, callback=callbackFunction, bouncetime=100)
