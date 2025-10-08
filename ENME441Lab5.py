@@ -17,7 +17,7 @@ GPIO.setup(in1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 def callbackFunction():
   pos_neg *= -1
 
-gpio.add_event_detect(in1, GPIO.RISING, callback=callbackFunction, bouncetime=100)
+GPIO.add_event_detect(in1, GPIO.RISING, callback=callbackFunction, bouncetime=100)
 
 pins2 = []
 for pin in pins:
