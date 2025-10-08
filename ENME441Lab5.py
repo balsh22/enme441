@@ -20,8 +20,8 @@ try:
   while True:
     t = time.time() - start_time
     for n, pin in enumerate(pins2):
-    brightness = math.sin(2 * math.pi * f * t - (phi * n)) ** 2
-    pins2.start(brightness * 100)
+      brightness = math.sin(2 * math.pi * f * t - (phi * n)) ** 2
+      pins2.start(brightness * 100)
 
 except KeyboardInterrupt:   # stop gracefully on ctrl-C
   print('\nExiting')
