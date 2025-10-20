@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import time
-from bug_class import Bug  # assumes Bug class is saved in bug_class.py
+from Shifter import Bug  # assumes Bug class is saved in bug_class.py
 
 # Switch pins
 s1, s2, s3 = 17, 27, 22
