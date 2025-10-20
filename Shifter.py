@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time
+import random
 
 class Shifter:
   def __init__(self, dataPin, clockPin, latchPin):
@@ -22,7 +23,7 @@ class Shifter:
       GPIO.output(self.dataPin, b & (1 << i))
       self.__ping(self.clockPin) # add bit to register
     self.__ping(self.latchPin) # send register to output
-    
+
 class Bug:
   def __init__(self, timestep=0.1, x=3, isWrapOn=False):
     self.timestep = timestep
