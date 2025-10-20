@@ -13,6 +13,10 @@ GPIO.setup(s3, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 bug = Bug()
 last_s2_state = GPIO.input(s2)
 running = 0
+bug_thread = None
+
+def run_bug():
+    bug.start()
 
 try:
     while True:
@@ -22,6 +26,8 @@ try:
 
         if s1_state == 1 and running == 0:
             running = 1
+            bug_thread = threading.Thread(target = run_bug, daemon = True)
+            bug_thread.start()
         elif s1_state == 0 and running == 1:
             bug.stop()
             running = 0
@@ -35,18 +41,8 @@ try:
             bug.timestep = 0.1 / 3.0
         else:
             bug.timestep = 0.1
-
-        if running:
-            bug._Bug__shifter.shiftByte(1 << bug.x)
-            time.sleep(bug.timestep)
-            import random
-            bug.x += random.choice([-1, 1])
-            if bug.isWrapOn:
-                bug.x %= 8
-            else:
-                bug.x = max(0, min(7, bug.x))
-        else:
-            time.sleep(0.05)
+        
+        time.sleep(0.05)
 
 except KeyboardInterrupt:
     GPIO.cleanup()
