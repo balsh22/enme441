@@ -43,6 +43,6 @@ class Bug:
       else:
         self.x = max(0, min(7, self.x))
 
-def stop(self):
-  self._running = False
-  self.__shifter.shiftByte(0)
+  def stop(self):
+    self._running = False
+    self.__shifter.shiftByte(0)
