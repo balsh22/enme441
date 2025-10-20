@@ -2,26 +2,26 @@ import RPi.GPIO as GPIO
 import time
 
 class Shifter:
-  def __init__(self, serialPin, clockPin, latchPin):
-    self.serialPin = serialPin
+  def __init__(self, dataPin, clockPin, latchPin):
+    self.dataPin = dataPin
     self.clockPin = clockPin
     self.latchPin = latchPin
 
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(self.serialPin, GPIO.OUT)
-    GPIO.setup(self.clockPin, GPIO.OUT, initial=0)
+    GPIO.setup(self.dataPin, GPIO.OUT)
+    GPIO.setup(self.clockPin, GPIO.OUT, initial=0) # start latch and clock low
     GPIO.setup(self.latchPin, GPIO.OUT, initial=0)
 
-  def __ping(self, pin):
-    GPIO.output(pin, 1)
+  def __ping(self, p):
+    GPIO.output(p, 1)
     time.sleep(0)
-    GPIO.output(pin, 0)
+    GPIO.output(p, 0)
 
-  def shiftByte(self, value):
+  def shiftByte(self, b):
     for i in range(8):
-      GPIO.output(self.serialPin, value & (1 << i))
-      self.__ping(self.clockPin)
-    self.__ping(self.latchPin)
+      GPIO.output(self.serialPin, b & (1 << i))
+      self.__ping(self.clockPin) # add bit to register
+    self.__ping(self.latchPin) # send register to output
 
 class Bug:
   def __init__(self, timestep=0.1, x=3, isWrapOn=False):
@@ -40,8 +40,10 @@ class Bug:
       self.x += step
       if self.isWrapOn:
         self.x %= 8
-      else:
-        self.x = max(0, min(7, self.x))
+      elif self.x < 0:
+        self.x = 0
+      elif self.x > 7:
+        self.x = 7
 
   def stop(self):
     self._running = False
