@@ -23,11 +23,26 @@ class Shifter:
       self.__ping(self.clockPin)
     self.__ping(self.latchPin)
 
+class Bug:
+  def __init__(self, timestep=0.1, x=3, isWrapOn=False):
+    self.timestep = timestep
+    self.x = x
+    self.isWrapOn = isWrapOn
+    self.__shifter = Shifter(23, 25, 24)
+    self._running = False
 
-try:
-  while 1:
-    for i in range(2**8):
-      shiftByte(i)
-      time.sleep(0.5)
-except:
-  GPIO.cleanup()
+  def start(self):
+    self._running = True
+    while self._running:
+      self.__shifter.shiftByte(1 << self.x)
+      time.sleep(self.timestep)
+      step = random.choice([-1, 1])
+      self.x += step
+      if self.isWrapOn:
+        self.x %= 8
+      else:
+        self.x = max(0, min(7, self.x))
+
+def stop(self):
+  self._running = False
+  self.__shifter.shiftByte(0)
