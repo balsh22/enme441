@@ -37,15 +37,14 @@ try:
             bug.timestep = 0.1
 
         if running:
-            bug.start()
-            # bug._Bug__shifter.shiftByte(1 << bug.x)
-            # time.sleep(bug.timestep)
-            # import random
-            # bug.x += random.choice([-1, 1])
-            # if bug.isWrapOn:
-            #     bug.x %= 8
-            # else:
-            #     bug.x = max(0, min(7, bug.x))
+            bug._Bug__shifter.shiftByte(1 << bug.x)
+            time.sleep(bug.timestep)
+            import random
+            bug.x += random.choice([-1, 1])
+            if bug.isWrapOn:
+                bug.x %= 8
+            else:
+                bug.x = max(0, min(7, bug.x))
         else:
             time.sleep(0.05)
 
