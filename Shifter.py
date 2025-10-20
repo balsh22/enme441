@@ -19,10 +19,10 @@ class Shifter:
 
   def shiftByte(self, b):
     for i in range(8):
-      GPIO.output(self.serialPin, b & (1 << i))
+      GPIO.output(self.dataPin, b & (1 << i))
       self.__ping(self.clockPin) # add bit to register
     self.__ping(self.latchPin) # send register to output
-
+    
 class Bug:
   def __init__(self, timestep=0.1, x=3, isWrapOn=False):
     self.timestep = timestep
