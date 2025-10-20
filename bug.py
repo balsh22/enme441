@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 import random
+import threading
 from Shifter import Bug
 
 s1, s2, s3 = 17, 27, 22
