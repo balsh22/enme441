@@ -1,4 +1,5 @@
 import RPi.GPIO as GPIO
+import time
 
 class Shifter:
   def __init__(self, serialPin, clockPin, latchPin):
