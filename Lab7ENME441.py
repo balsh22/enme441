@@ -26,6 +26,7 @@ def parsePOSTdata(data):
             data_dict[key_val[0]] = key_val[1]
     return data_dict
 
+
 class LEDHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -37,22 +38,24 @@ class LEDHandler(BaseHTTPRequestHandler):
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length).decode("utf-8")
 
-        # Use custom parser instead of urllib.parse
+        # Use custom parser
         data = parsePOSTdata(post_data)
 
         # Get LED and brightness
         led = int(data.get("led", "1")) - 1
         brightness = int(data.get("brightness", "0"))
-        led_brightness[led] = brightness
 
+        # Update LED and record brightness
+        led_brightness[led] = brightness
         pwms[led].ChangeDutyCycle(brightness)
 
-        # Refresh page
+        # Reload page to show updated percentages
         self.send_response(303)
         self.send_header('Location', '/')
         self.end_headers()
 
     def html_page(self):
+        # Always reset slider and LED 1 as default
         html = f"""
         <html>
         <form method="POST" action="/">
@@ -70,7 +73,7 @@ class LEDHandler(BaseHTTPRequestHandler):
         """
         return html
 
-# Run the server
+
 try:
     print("Starting web server on http://0.0.0.0:8080 ...")
     with HTTPServer(('', 8080), LEDHandler) as server:
