@@ -12,10 +12,8 @@ pwms = [GPIO.PWM(pin, 1000) for pin in led_pins]
 for pwm in pwms:
     pwm.start(0)
 
-# Track brightness levels
 led_brightness = [0, 0, 0]
 
-# --- Your original parser unchanged ---
 def parsePOSTdata(data):
     data_dict = {}
     idx = data.find('\r\n\r\n')+4
@@ -26,7 +24,6 @@ def parsePOSTdata(data):
         if len(key_val) == 2:
             data_dict[key_val[0]] = key_val[1]
     return data_dict
-# --------------------------------------
 
 
 class LEDHandler(BaseHTTPRequestHandler):
@@ -37,22 +34,19 @@ class LEDHandler(BaseHTTPRequestHandler):
         self.wfile.write(self.html_page().encode("utf-8"))
 
     def do_POST(self):
-        content_length = int(self.headers.get('Content-Length', 0))
-        post_data = self.rfile.read(content_length).decode("utf-8")
+        content_length = int(self.headers.get['Content-Length'])
+        post_data = self.rfile.read(content_length)
 
-        # 🧠 Trick: add fake headers so parsePOSTdata() sees a "\r\n\r\n"
-        formatted_data = "FAKE / HTTP/1.1\r\nHeader: value\r\n\r\n" + post_data
+        formatted_data = "Dummy_Header\r\nDummy_Header\r\n\r\n" + post_data
 
         data = parsePOSTdata(formatted_data)
 
-        # Extract LED and brightness
         led = int(data.get("led", "1")) - 1
         brightness = int(data.get("brightness", "0"))
         led_brightness[led] = brightness
 
         pwms[led].ChangeDutyCycle(brightness)
 
-        # Refresh page to update percentages
         self.send_response(303)
         self.send_header('Location', '/')
         self.end_headers()
