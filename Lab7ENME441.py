@@ -1,22 +1,30 @@
 import RPi.GPIO as GPIO
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import urllib.parse
 
 GPIO.setmode(GPIO.BCM)
 
-# Define LED pins
 led_pins = [17, 27, 22]
 for pin in led_pins:
     GPIO.setup(pin, GPIO.OUT)
     GPIO.output(pin, GPIO.LOW)
 
-# Create PWM objects for each LED (1kHz frequency)
 pwms = [GPIO.PWM(pin, 1000) for pin in led_pins]
 for pwm in pwms:
     pwm.start(0)
 
 # Track brightness levels
 led_brightness = [0, 0, 0]
+
+def parsePOSTdata(data):
+    data_dict = {}
+    idx = data.find('\r\n\r\n') + 4
+    data = data[idx:]
+    data_pairs = data.split('&')
+    for pair in data_pairs:
+        key_val = pair.split('=')
+        if len(key_val) == 2:
+            data_dict[key_val[0]] = key_val[1]
+    return data_dict
 
 class LEDHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -28,11 +36,13 @@ class LEDHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length).decode("utf-8")
-        data = urllib.parse.parse_qs(post_data)
+
+        # Use custom parser instead of urllib.parse
+        data = parsePOSTdata(post_data)
 
         # Get LED and brightness
-        led = int(data.get("led", [1])[0]) - 1
-        brightness = int(data.get("brightness", [0])[0])
+        led = int(data.get("led", "1")) - 1
+        brightness = int(data.get("brightness", "0"))
         led_brightness[led] = brightness
 
         pwms[led].ChangeDutyCycle(brightness)
