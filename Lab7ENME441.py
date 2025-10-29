@@ -34,8 +34,8 @@ class LEDHandler(BaseHTTPRequestHandler):
         self.wfile.write(self.html_page().encode("utf-8"))
 
     def do_POST(self):
-        content_length = int(self.headers.get['Content-Length'])
-        post_data = self.rfile.read(content_length)
+        content_length = int(self.headers.get('Content-Length', 0))
+        post_data = self.rfile.read(content_length).decode("utf-8")
 
         formatted_data = "Dummy_Header\r\nDummy_Header\r\n\r\n" + post_data
 
