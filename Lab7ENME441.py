@@ -43,21 +43,21 @@ class LEDHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def html_page(self):
-        html = f"""<html><head><title>LED Brightness Control</title></head>
-        <body style="font-family:Arial;">
-        <h2>LED Brightness Control</h2>
+        html = f"""
+        <html>
         <form method="POST" action="/">
         <label>Brightness level:</label><br>
-        <input type="range" name="brightness" min="0" max="100" value="0"><br><br>
-
-        <b>Select LED:</b><br>
+        <input type="range" name="brightness" min="0" max="100" value="0"><br>
+        <br>
+        Select LED:<br>
         <input type="radio" name="led" value="1" checked> LED 1 ({led_brightness[0]}%)<br>
         <input type="radio" name="led" value="2"> LED 2 ({led_brightness[1]}%)<br>
-        <input type="radio" name="led" value="3"> LED 3 ({led_brightness[2]}%)<br><br>
-
+        <input type="radio" name="led" value="3"> LED 3 ({led_brightness[2]}%)<br>
+        <br>
         <input type="submit" value="Change Brightness">
         </form>
-        </body></html>"""
+        </html>
+        """
         return html
 
 # Run the server
