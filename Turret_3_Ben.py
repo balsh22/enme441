@@ -293,8 +293,7 @@ def manual_step(axis, delta):
 def goto_home():
     m_az.goAngle(0.0)
     m_el.goAngle(0.0)
-    wait_until_reached(0.0, 0.0)
-
+    wait_for_motors(0.0, 0.0)
 
 def set_zero():
     m_az.zero()
@@ -749,6 +748,7 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
 
 
