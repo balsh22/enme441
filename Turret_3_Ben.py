@@ -351,6 +351,44 @@ def save_calibration_for_label(label):
     build_processed_targets()
     return True, {"az_offset": az_diff, "el_offset": el_diff}
 
+def final_run_sequence():
+    """Aim at each target in ascending raw azimuth, fire laser, move on."""
+    def worker():
+        print("[FINAL RUN] Starting sequence")
+        for tgt in processed_targets:
+            try:
+                label = tgt["label"]
+                az_goal = float(tgt["az_deg_applied"])
+                el_goal = float(tgt["el_deg_applied"])
+
+                print(f"[FINAL RUN] Target {label}: AZ={az_goal:.2f}, EL={el_goal:.2f}")
+
+                # Move motors
+                m_az.goAngle(az_goal)
+                m_el.goAngle(EL_INVERT * el_goal)
+
+                # Wait until settled
+                ok = wait_for_motors(az_goal, el_goal)
+                print(f"[FINAL RUN] Reached {label}: {ok}")
+
+                if not ok:
+                    print("[FINAL RUN] Timeout, continuing anyway")
+
+                # Fire laser (blocking here is intentional)
+                fire_laser()
+
+                # Small pause between targets
+                time.sleep(0.5)
+
+            except Exception as e:
+                print(f"[FINAL RUN] Error on {tgt['label']}: {e}")
+                traceback.print_exc()
+
+        print("[FINAL RUN] Sequence complete")
+
+    threading.Thread(target=worker, daemon=True).start()
+
+
 # ------------------ HTTP helpers ------------------
 def recv_request(conn):
     try:
@@ -434,6 +472,7 @@ button { padding: 8px 12px; margin: 6px; }
     <button onclick="gotoSelected()">Go to selected target</button>
     <button onclick="saveCalibration()">Save Calibration (use current motor angles)</button>
     <button onclick="reloadTargets()">Reload Targets</button>
+    <button onclick="finalRun()" style="background:#c62828;color:white;">FINAL RUN</button>
     <span id="targetMsg" style="margin-left:8px"></span>
   </div>
   <div style="margin-top:10px"><strong>Processed Targets (raw & applied):</strong>
@@ -515,6 +554,17 @@ function populateTargets(list){
     sel.appendChild(opt);
   }
 }
+
+function finalRun(){
+  if(!confirm("Start final run? This will fire the laser at ALL targets.")) return;
+  api('/final_run','POST')
+    .then(r=>r.json())
+    .then(j=>{
+      if(j.ok) alert('Final run started');
+      else alert('Error: '+(j.error||''));
+    });
+}
+
 
 async function refreshAngles(){
   try{
@@ -608,6 +658,11 @@ def handle_laser(req_text=None):
     handle_laser_request()
     return {"ok": True, "message": f"Laser firing for {LASER_ON_SECONDS}s"}
 
+def handle_final_run(req_text=None):
+    final_run_sequence()
+    return {"ok": True, "message": "Final run started"}
+
+
 # ------------------ Server loop ------------------
 def run_server():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -645,6 +700,8 @@ def run_server():
                     res = handle_save_calibration(req); send_json(conn, res)
                 elif path == "/laser":
                     res = handle_laser(req); send_json(conn, res)
+                elif path == "/final_run":
+                    res = handle_final_run(req); send_json(conn, res)
                 else:
                     send_json(conn, {"ok": False, "error": "unknown POST"})
             else:
@@ -678,5 +735,6 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
 
