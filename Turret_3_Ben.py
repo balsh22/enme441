@@ -446,7 +446,6 @@ button { padding: 8px 12px; margin: 6px; }
 <div class="sect">
   <h3>Manual</h3>
   <div><strong>Azimuth</strong><br>
-    <button onclick="api('/laser','POST')">Laser (3s)</button>
     <button onclick="step('az',-5)">◀ -5°</button>
     <button onclick="step('az',-1)">◀ -1°</button>
     <button onclick="step('az',-0.5)">◀ -0.5°</button>
@@ -463,6 +462,7 @@ button { padding: 8px 12px; margin: 6px; }
     <button onclick="step('el',5)">5° ▲</button>
   </div>
   <div style="margin-top:10px;"><button onclick="zero()">Zero Motors</button></div>
+      <button onclick="api('/laser','POST')">Laser (3s)</button>
 </div>
 
 <div class="sect">
@@ -735,6 +735,7 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
 
 
