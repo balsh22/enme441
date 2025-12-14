@@ -192,6 +192,10 @@ def build_processed_targets():
             "distance": dist
         })
 
+    # sort targets by raw azimuth ascending (0–360)
+    processed_targets.sort(key=lambda t: t["az_deg_raw"])
+
+    
     return True
 
 # ------------------ Calibration persistence ------------------
@@ -674,4 +678,5 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
