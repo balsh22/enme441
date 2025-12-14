@@ -290,6 +290,11 @@ def manual_step(axis, delta):
     elif axis == "el":
         m_el.rotate(EL_INVERT * float(delta))
 
+def goto_home():
+    m_az.goAngle(0.0)
+    m_el.goAngle(0.0)
+    wait_until_reached(0.0, 0.0)
+
 
 def set_zero():
     m_az.zero()
@@ -463,6 +468,9 @@ button { padding: 8px 12px; margin: 6px; }
   </div>
   <div style="margin-top:10px;"><button onclick="zero()">Zero Motors</button></div>
       <button onclick="api('/laser','POST')">Laser (3s)</button>
+      <button onclick="api('/home','POST')">
+  Go Home
+</button>
 </div>
 
 <div class="sect">
@@ -662,6 +670,10 @@ def handle_final_run(req_text=None):
     final_run_sequence()
     return {"ok": True, "message": "Final run started"}
 
+def handle_home(req_text=None):
+    threading.Thread(target=goto_home, daemon=True).start()
+    return {"ok": True}
+
 
 # ------------------ Server loop ------------------
 def run_server():
@@ -702,6 +714,8 @@ def run_server():
                     res = handle_laser(req); send_json(conn, res)
                 elif path == "/final_run":
                     res = handle_final_run(req); send_json(conn, res)
+                elif path == "/home":
+                    res = handle_home(req); send_json(conn, res)
                 else:
                     send_json(conn, {"ok": False, "error": "unknown POST"})
             else:
@@ -735,6 +749,7 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
 
 
