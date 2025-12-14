@@ -93,32 +93,47 @@ def normalize_deg(angle):
     return (angle % 360.0 + 360.0) % 360.0
 
 def compute_az_el(tur_r, tur_theta, tgt_r, tgt_theta, tgt_z):
-    # Turret position in world coordinates
+    # Turret position
     tx, ty, tz = polar_to_cartesian_cm(tur_r, tur_theta, 0.0)
 
-    # Target position in world coordinates
+    # Target position
     px, py, pz = polar_to_cartesian_cm(tgt_r, tgt_theta, tgt_z)
 
-    # Vector from turret → target
-    dx = px - tx
-    dy = py - ty
-    dz = pz - tz
+    # Vector from turret to target
+    vx = px - tx
+    vy = py - ty
+    vz = pz - tz
 
-    # World-frame azimuth
-    az_world = math.atan2(dy, dx)
+    # Vector from turret to center (defines azimuth = 0)
+    zx = -tx
+    zy = -ty
 
-    # Convert to turret-local azimuth
-    az_local = az_world - tur_theta
+    # Normalize vectors (optional but cleaner)
+    v_len = math.hypot(vx, vy)
+    z_len = math.hypot(zx, zy)
 
-    az_deg = normalize_deg(math.degrees(az_local))
+    if v_len == 0 or z_len == 0:
+        az_deg = 0.0
+    else:
+        vx /= v_len
+        vy /= v_len
+        zx /= z_len
+        zy /= z_len
 
-    horiz = math.hypot(dx, dy)
-    el_deg = math.degrees(math.atan2(dz, horiz))
+        # Signed angle from Z → V
+        dot = zx * vx + zy * vy
+        cross = zx * vy - zy * vx  # 2D cross product (scalar)
 
-    dist = math.sqrt(dx*dx + dy*dy + dz*dz)
+        az_rad = math.atan2(cross, dot)
+        az_deg = normalize_deg(math.degrees(az_rad))
+
+    # Elevation
+    horiz = math.hypot(px - tx, py - ty)
+    el_deg = math.degrees(math.atan2(vz, horiz))
+
+    dist = math.sqrt((px - tx)**2 + (py - ty)**2 + vz*vz)
 
     return az_deg, el_deg, dist
-
 
 def build_processed_targets():
     """
@@ -659,3 +674,4 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
