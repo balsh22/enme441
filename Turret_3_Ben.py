@@ -480,7 +480,7 @@ body {
 
 #header img {
   width: 100%;
-  max-height: 220px;   /* ← controls how tall the image is */
+  max-height: 550px;   /* ← controls how tall the image is */
   object-fit: contain; /* keeps aspect ratio */
   display: block;
   margin: 0 auto;
@@ -845,6 +845,7 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
 
 
