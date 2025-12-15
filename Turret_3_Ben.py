@@ -454,25 +454,26 @@ def send_file(conn, filepath, content_type):
 def page_html():
     return """<!doctype html>
 <html><head><meta charset="utf-8"><title>Turret Control (Calibration)</title>
+
 <style>
 html, body {
-  height: 100%;
   margin: 0;
+  padding: 0;
+  height: 100%;
 }
 
 body {
   font-family: Arial, sans-serif;
-  background: url('turret_background.jpg') no-repeat center center fixed;
+  background: url('/turret_background.jpg') no-repeat center center fixed;
   background-size: cover;
   display: flex;
-  justify-content: center;   /* horizontal centering */
-  align-items: flex-start;   /* keep content near top-middle */
+  justify-content: center;
 }
 
-#ui-container {
-  margin-top: 24px;
+#container {
   width: 100%;
-  max-width: 820px;
+  max-width: 900px;
+  padding: 20px;
 }
 
 button {
@@ -481,11 +482,11 @@ button {
 }
 
 .sect {
-  border: 1px solid rgba(255,255,255,0.3);
+  border: 1px solid #ddd;
   padding: 12px;
   margin-bottom: 12px;
   border-radius: 6px;
-  background: rgba(255,255,255,0.92); /* readable over background */
+  background: rgba(255,255,255,0.88);
 }
 
 #angles {
@@ -503,11 +504,12 @@ button {
 }
 </style>
 
+
 </head>
 <body>
-  <div id="ui-container">
+<div id="ui-container">
 
-    <h1 style="text-align:center;">Turret Control — Calibration</h1>
+<h1 style="text-align:center;">Turret Control — Calibration</h1>
 
 <div class="sect">
   <h3>Manual</h3>
@@ -813,6 +815,7 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
 
 
