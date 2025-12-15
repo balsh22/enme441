@@ -434,34 +434,29 @@ def send_json(conn, obj_dict):
     except Exception as e:
         print("send_json error:", e)
 
-
 def send_file(conn, filepath, content_type):
     try:
         with open(filepath, "rb") as f:
             data = f.read()
         header = (
-            f"HTTP/1.1 200 OK\r\n"
+            "HTTP/1.1 200 OK\r\n"
             f"Content-Type: {content_type}\r\n"
             f"Content-Length: {len(data)}\r\n"
-            f"Connection: close\r\n\r\n"
+            "Connection: close\r\n\r\n"
         )
         conn.sendall(header.encode() + data)
-    except Exception as e:
+    except FileNotFoundError:
         send_html(conn, "<h1>404 Not Found</h1>", status=404)
 
 
 # ------------------ UI HTML ------------------
 def page_html():
     return """<!doctype html>
-<html><head><meta charset="utf-8"><title>Turret Control (Calibration)</title>
-
-<!doctype html>
 <html>
 <head>
 <meta charset="utf-8">
 <title>Captain Kesslers Turret Command</title>
 
-<style>
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -529,16 +524,15 @@ button {
   padding: 8px;
 }
 </style>
-
 </head>
 
 <body>
-<div class="ui-container">
+<div id="page">
 
-<header>
-  <img src="/capt_kessler.jpg" alt="Captain Kessler">
-  <h1>Captain Kesslers Turret Command</h1>
-</header>
+  <div id="header">
+    <img src="/capt_kessler.jpg" alt="Captain Kessler">
+    <h1>Captain Kesslers Turret Command</h1>
+  </div>
 
 
 <div class="sect">
@@ -689,8 +683,10 @@ async function initialLoad(){
 }
 initialLoad();
 </script>
+
 </div>
-</body></html>
+</body>
+</html>
 """
 
 # ------------------ Endpoint handlers ------------------
@@ -791,6 +787,8 @@ def run_server():
                     send_json(conn, handle_targets())
                 elif path == "/angles":
                     send_json(conn, handle_angles())
+                elif path == "/capt_kessler.jpg":
+                    send_file(conn, "capt_kessler.jpg", "image/jpeg")
                 elif path == "/turret_background.jpg":
                     send_file(conn, "turret_background.jpg", "image/jpeg")
                 else:
@@ -845,6 +843,7 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
 
 
