@@ -287,7 +287,7 @@ def wait_for_motors(az_target, el_target, timeout=None):
 def manual_step(axis, delta):
     """Relative motion using Stepper.rotate(delta)."""
     if axis == "az":
-        m_az.rotate(float(delta))
+        m_az.rotate(AZ_INVERT * float(delta))
     elif axis == "el":
         m_el.rotate(EL_INVERT * float(delta))
 
@@ -749,6 +749,7 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
 
 
