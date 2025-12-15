@@ -46,6 +46,7 @@ ANGLE_TOLERANCE_DEG = 0.8
 CALIB_FILE = "calibration.json"
 
 EL_INVERT = -1 #flip elevation direction
+AZ_INVERT = -1 #flip azimuth direciton
 
 # Laser settings
 LASER_PIN = 17        # GPIO17, active HIGH
@@ -748,6 +749,7 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
 
 
