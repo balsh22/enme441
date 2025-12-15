@@ -455,86 +455,62 @@ def page_html():
     return """<!doctype html>
 <html><head><meta charset="utf-8"><title>Turret Control (Calibration)</title>
 
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Captain Kesslers Turret Command</title>
+
 <style>
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 body {
   font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
+  background-image: url("/turret_background.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
   display: flex;
   justify-content: center;
-  background: #000;
+  align-items: flex-start;
 }
 
-#page {
-  width: 100%;
-  max-width: 900px;
+.ui-container {
+  width: 800px;
+  margin-top: 20px;
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+header {
   text-align: center;
+  margin-bottom: 20px;
 }
 
-#header {
-  position: relative;
-  width: 100%;
-}
-
-#header img {
-  width: 100%;
+header img {
+  max-width: 100%;
   height: auto;
-  display: block;
+  border-radius: 10px;
 }
 
-#header h1 {
-  position: absolute;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  margin: 0;
-  padding: 10px 18px;
-  background: rgba(0, 0, 0, 0.55);
-  color: #fff;
-  border-radius: 8px;
-  font-size: 28px;
-}
-
-.sect {
-  border: 1px solid #ddd;
-  padding: 12px;
-  margin: 12px auto;
-  border-radius: 6px;
-  background: rgba(255,255,255,0.95);
-}
-
-button {
-  padding: 8px 12px;
-  margin: 6px;
-}
-
-#angles {
-  white-space: pre;
-  background: #f7f7f7;
-  padding: 8px;
-  border-radius: 4px;
-}
-
-#targetsDebug {
-  max-height: 220px;
-  overflow: auto;
-  background: #f4f4f4;
-  padding: 8px;
+header h1 {
+  margin-top: 10px;
 }
 </style>
-
-
-
 </head>
-<body>
 
 <body>
-  <div id="page">
+<div class="ui-container">
 
-    <div id="header">
-      <img src="/capt_kessler.jpg" alt="Captain Kessler">
-      <h1>Captain Kesslers Turret Command</h1>
-    </div>
+<header>
+  <img src="/capt_kessler.jpg" alt="Captain Kessler">
+  <h1>Captain Kesslers Turret Command</h1>
+</header>
+
 
 <div class="sect">
   <h3>Manual</h3>
@@ -840,6 +816,7 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
 
 
