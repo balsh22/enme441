@@ -532,7 +532,7 @@ button {
 <div id="page">
 
   <div id="header">
-    <img src="/capt_kessler.jpg" alt="Captain Kessler">
+    <img src="/capt_kessler2.jpg" alt="Captain Kessler">
     <h1>Captain Kesslers Turret Command</h1>
   </div>
 
@@ -789,8 +789,8 @@ def run_server():
                     send_json(conn, handle_targets())
                 elif path == "/angles":
                     send_json(conn, handle_angles())
-                elif path == "/capt_kessler.jpg":
-                    send_file(conn, "capt_kessler.jpg", "image/jpeg")
+                elif path == "/capt_kessler2.jpg":
+                    send_file(conn, "capt_kessler2.jpg", "image/jpeg")
                 elif path == "/turret_background.jpg":
                     send_file(conn, "turret_background.jpg", "image/jpeg")
                 else:
@@ -845,6 +845,7 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
 
 
