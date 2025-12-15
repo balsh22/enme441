@@ -434,6 +434,22 @@ def send_json(conn, obj_dict):
     except Exception as e:
         print("send_json error:", e)
 
+
+def send_file(conn, filepath, content_type):
+    try:
+        with open(filepath, "rb") as f:
+            data = f.read()
+        header = (
+            f"HTTP/1.1 200 OK\r\n"
+            f"Content-Type: {content_type}\r\n"
+            f"Content-Length: {len(data)}\r\n"
+            f"Connection: close\r\n\r\n"
+        )
+        conn.sendall(header.encode() + data)
+    except Exception as e:
+        send_html(conn, "<h1>404 Not Found</h1>", status=404)
+
+
 # ------------------ UI HTML ------------------
 def page_html():
     return """<!doctype html>
@@ -743,6 +759,8 @@ def run_server():
                     send_json(conn, handle_targets())
                 elif path == "/angles":
                     send_json(conn, handle_angles())
+                elif path == "/turret_background.jpg":
+                    send_file(conn, "turret_background.jpg", "image/jpeg")
                 else:
                     send_html(conn, page_html())
             elif method == "POST":
@@ -795,6 +813,7 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
 
 
