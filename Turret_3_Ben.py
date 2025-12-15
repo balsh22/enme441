@@ -530,11 +530,9 @@ button {
 <div id="ui-container">
 <div id="page">
 
-    <div id="header">
-      <img src="/capt_kessler.jpg" alt="Captain Kessler">
-      <h1>Captain Kesslers Turret Command</h1>
-
-<h1 style="text-align:center;">Turret Control — Calibration</h1>
+<div id="header">
+    <img src="/capt_kessler.jpg" alt="Captain Kessler">
+    h1>Captain Kesslers Turret Command</h1>
 
 <div class="sect">
   <h3>Manual</h3>
@@ -840,6 +838,7 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
 
 
