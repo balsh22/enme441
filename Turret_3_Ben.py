@@ -456,37 +456,56 @@ def page_html():
 <html><head><meta charset="utf-8"><title>Turret Control (Calibration)</title>
 
 <style>
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
-
 body {
   font-family: Arial, sans-serif;
-  background: url('/turret_background.jpg') no-repeat center center fixed;
-  background-size: cover;
+  margin: 0;
+  padding: 0;
   display: flex;
   justify-content: center;
+  background: #000;
 }
 
-#container {
+#page {
   width: 100%;
   max-width: 900px;
-  padding: 20px;
+  text-align: center;
 }
 
-button {
-  padding: 8px 12px;
-  margin: 6px;
+#header {
+  position: relative;
+  width: 100%;
+}
+
+#header img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+#header h1 {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 10px 18px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 28px;
 }
 
 .sect {
   border: 1px solid #ddd;
   padding: 12px;
-  margin-bottom: 12px;
+  margin: 12px auto;
   border-radius: 6px;
-  background: rgba(255,255,255,0.88);
+  background: rgba(255,255,255,0.95);
+}
+
+button {
+  padding: 8px 12px;
+  margin: 6px;
 }
 
 #angles {
@@ -505,9 +524,15 @@ button {
 </style>
 
 
+
 </head>
 <body>
 <div id="ui-container">
+<div id="page">
+
+    <div id="header">
+      <img src="/capt_kessler.jpg" alt="Captain Kessler">
+      <h1>Captain Kesslers Turret Command</h1>
 
 <h1 style="text-align:center;">Turret Control — Calibration</h1>
 
@@ -815,6 +840,7 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
 
 
