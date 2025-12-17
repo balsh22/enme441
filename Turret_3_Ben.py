@@ -95,7 +95,7 @@ def normalize_deg(angle):
 
 def compute_az_el(tur_r, tur_theta, tgt_r, tgt_theta, tgt_z):
     # Turret position
-    tx, ty, tz = polar_to_cartesian_cm(tur_r, tur_theta, 6.0)
+    tx, ty, tz = polar_to_cartesian_cm(tur_r, tur_theta, 3.0)
 
     # Target position
     px, py, pz = polar_to_cartesian_cm(tgt_r, tgt_theta, tgt_z)
@@ -855,6 +855,7 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
 
 
