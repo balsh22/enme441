@@ -255,7 +255,7 @@ def handle_laser_request():
     threading.Thread(target=fire_laser, daemon=True).start()
 
 # ------------------ Motor helpers ------------------
-def wait_for_motors(az_target, el_target, timeout=None):
+def wait_for_motors(az_target, el_target, timeout=None, force_wait=False):
     """Wait until both motors are within ANGLE_TOLERANCE_DEG or timeout."""
     start = time.time()
     if timeout is None:
@@ -279,7 +279,7 @@ def wait_for_motors(az_target, el_target, timeout=None):
         el_err = abs((el_target - el_now + 180.0) % 360.0 - 180.0)
         if az_err <= ANGLE_TOLERANCE_DEG and el_err <= ANGLE_TOLERANCE_DEG:
             return True
-        if time.time() - start > timeout:
+        if not force_wait and timeout is not None and time.time() - start > timeout:
             return False
         time.sleep(0.03)
 
@@ -356,42 +356,26 @@ def save_calibration_for_label(label):
     build_processed_targets()
     return True, {"az_offset": az_diff, "el_offset": el_diff}
 
-def final_run_sequence():
-    """Aim at each target in ascending raw azimuth, fire laser, move on."""
-    def worker():
-        print("[FINAL RUN] Starting sequence")
-        for tgt in processed_targets:
-            try:
-                label = tgt["label"]
-                az_goal = float(tgt["az_deg_applied"])
-                el_goal = float(tgt["el_deg_applied"])
+def final_run_sequence(targets):
+    for tgt in targets:
+        az = tgt["az_deg_applied"]
+        el = tgt["el_deg_applied"]
 
-                print(f"[FINAL RUN] Target {label}: AZ={az_goal:.2f}, EL={el_goal:.2f}")
+        # 1. Move
+        m_az.goAngle(az)
+        m_el.goAngle(EL_INVERT * el)
 
-                # Move motors
-                m_az.goAngle(az_goal)
-                m_el.goAngle(EL_INVERT * el_goal)
+        # 2. WAIT UNTIL ARRIVED (no timeout)
+        reached = wait_for_motors(az, el, force_wait=True)
 
-                # Wait until settled
-                ok = wait_for_motors(az_goal, el_goal)
-                print(f"[FINAL RUN] Reached {label}: {ok}")
+        if not reached:
+            print("WARNING: should not happen anymore")
 
-                if not ok:
-                    print("[FINAL RUN] Timeout, continuing anyway")
+        # 3. ONLY NOW fire laser
+        fire_laser()
 
-                # Fire laser (blocking here is intentional)
-                fire_laser()
-
-                # Small pause between targets
-                time.sleep(0.5)
-
-            except Exception as e:
-                print(f"[FINAL RUN] Error on {tgt['label']}: {e}")
-                traceback.print_exc()
-
-        print("[FINAL RUN] Sequence complete")
-
-    threading.Thread(target=worker, daemon=True).start()
+        # 4. Optional pause between targets
+        time.sleep(0.5)
 
 
 # ------------------ HTTP helpers ------------------
@@ -845,6 +829,7 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
 
 
