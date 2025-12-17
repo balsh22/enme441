@@ -314,7 +314,7 @@ def goto_target(label):
             print(f"[GOTO] moving to {label}: AZ={az_goal:.2f}, EL={el_goal:.2f}")
             m_az.goAngle(az_goal)
             m_el.goAngle(EL_INVERT * el_goal)
-            ok = wait_for_motors(az_goal, el_goal)
+            ok = wait_for_motors(az_goal, EL_INVERT * el_goal)
             print("[GOTO] done, reached:", ok)
         except Exception as e:
             print("Exception in goto worker:", e)
@@ -384,7 +384,7 @@ def final_run_sequence():
             while True:
                 reached = wait_for_motors(
                     az,
-                    el,
+                    EL_INVERT * el,
                     timeout=None   # auto-estimated
                 )
                 if reached:
@@ -855,6 +855,7 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
 
 
