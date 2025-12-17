@@ -41,7 +41,7 @@ MY_TEAM = "3"   # turret id (string)
 HOST = ""
 PORT = 8080
 
-ANGLE_TOLERANCE_DEG = 0.8
+ANGLE_TOLERANCE_DEG = 0.4
 
 CALIB_FILE = "calibration.json"
 
@@ -356,26 +356,52 @@ def save_calibration_for_label(label):
     build_processed_targets()
     return True, {"az_offset": az_diff, "el_offset": el_diff}
 
-def final_run_sequence(targets):
-    for tgt in targets:
-        az = tgt["az_deg_applied"]
-        el = tgt["el_deg_applied"]
+def final_run_sequence():
+    """
+    Sequentially aim at each target (sorted by applied azimuth),
+    wait until motion is complete, fire laser, then move on.
+    """
 
-        # 1. Move
-        m_az.goAngle(az)
-        m_el.goAngle(EL_INVERT * el)
+    def worker():
+        # Sort by applied azimuth (0–360)
+        targets = sorted(
+            processed_targets,
+            key=lambda t: t["az_deg_applied"]
+        )
 
-        # 2. WAIT UNTIL ARRIVED (no timeout)
-        reached = wait_for_motors(az, el, force_wait=True)
+        for t in targets:
+            label = t["label"]
+            az = float(t["az_deg_applied"])
+            el = float(t["el_deg_applied"])
 
-        if not reached:
-            print("WARNING: should not happen anymore")
+            print(f"[FINAL] Moving to {label}: AZ={az:.2f}, EL={el:.2f}")
 
-        # 3. ONLY NOW fire laser
-        fire_laser()
+            # Start motion
+            m_az.goAngle(az)
+            m_el.goAngle(EL_INVERT * el)
 
-        # 4. Optional pause between targets
-        time.sleep(0.5)
+            # HARD wait: do not continue until reached
+            while True:
+                reached = wait_for_motors(
+                    az,
+                    el,
+                    timeout=None   # auto-estimated
+                )
+                if reached:
+                    break
+                print(f"[FINAL] Still moving to {label}... waiting")
+                time.sleep(0.1)
+
+            print(f"[FINAL] Reached {label}, firing laser")
+            fire_laser()
+
+            # Optional settle delay between targets
+            time.sleep(0.5)
+
+        print("[FINAL] Run complete")
+
+    threading.Thread(target=worker, daemon=True).start()
+
 
 
 # ------------------ HTTP helpers ------------------
@@ -829,6 +855,7 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
 
 
