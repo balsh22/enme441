@@ -25,7 +25,7 @@ CLOCK_PIN = 21
 LASER_PIN = 17              # Laser stuff
 LASER_ON_SECONDS = 3 
 
-USE_LOCAL_JSON = False                  # Flag to change for when doing testing outside of class without JSON server set up
+USE_LOCAL_JSON = True                  # Flag to change for when doing testing outside of class without JSON server set up
 LOCAL_JSON_FILE = "positions.json"      # Local JSON file used for testing, downloaded from test server during class
 JSON_URL = "http://192.168.1.254:8000/positions.json"
 
@@ -803,4 +803,5 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
