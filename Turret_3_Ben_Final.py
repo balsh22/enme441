@@ -313,7 +313,7 @@ def final_run_sequence():                                      # do the final au
 
     def worker():
         load_positions()
-        build_processed_target()                    # grab most up to date positions from JSON server or file, whichever is being used, then process the data so it can be used in the final run, this can also be done manually using the reload positions button (look at handle_reload below), this will not alter any previous calibrations inputted
+        build_processed_targets()                    # grab most up to date positions from JSON server or file, whichever is being used, then process the data so it can be used in the final run, this can also be done manually using the reload positions button (look at handle_reload below), this will not alter any previous calibrations inputted
         targets = sorted(
             processed_targets,
             key=lambda t: t["az_deg_applied"]
@@ -805,6 +805,7 @@ if __name__ == "__main__":
             pass
         GPIO.cleanup()
         print("GPIO cleaned up.")
+
 
 
 
